@@ -82,6 +82,4 @@ The source is fully self-contained in a single file:
 
 Contributions, bug reports, and feature requests are welcome! Feel free to open an issue or submit a pull request.
 
-## 📄 License
 
-Specify your preferred license here (e.g., MIT).
