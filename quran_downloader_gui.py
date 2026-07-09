@@ -5,7 +5,8 @@ import requests
 from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel, 
                              QComboBox, QRadioButton, QProgressBar, QPushButton, 
                              QMessageBox, QHBoxLayout, QCompleter)
-from PyQt6.QtCore import Qt, QThread, pyqtSignal
+from PyQt6.QtCore import Qt, QThread, pyqtSignal, QUrl
+from PyQt6.QtGui import QDesktopServices
 
 # The 114 Surahs of the Holy Quran
 SURAHS = [
@@ -24,6 +25,7 @@ SURAHS = [
 ]
 
 RECITERS = {
+   
     "إبراهيم الأخضر": "https://server6.mp3quran.net/akdr/",
     "أكرم العلاقمي": "https://server9.mp3quran.net/akrm/",
     "ماجد العنزي": "https://server8.mp3quran.net/majd_onazi/",
@@ -265,12 +267,12 @@ RECITERS = {
     "يحيى حوا": "https://server12.mp3quran.net/yahya/",
     "يوسف الشويعي": "https://server9.mp3quran.net/yousef/",
     "عبدالله عبدل": "https://server16.mp3quran.net/a_abdl/Rewayat-Hafs-A-n-Assem/"
+
 }
 
 class DownloadWorker(QThread):
     """
     Background worker thread to handle downloading without freezing the UI.
-    PyQt requires UI updates to happen through signals.
     """
     progress_updated = pyqtSignal(int, str)
     max_progress_set = pyqtSignal(int)
@@ -357,7 +359,9 @@ class QuranDownloaderApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("تحميل القرآن الكريم بضغطة واحدة")
-        self.setFixedSize(500, 420)
+        
+        # Increased window height slightly to accommodate the new buttons
+        self.setFixedSize(500, 480) 
         
         self.downloads_path = os.path.join(os.path.expanduser("~"), "Downloads", "Quran_Downloads")
         
@@ -371,15 +375,14 @@ class QuranDownloaderApp(QWidget):
         layout.setSpacing(15)
         layout.setContentsMargins(20, 20, 20, 20)
 
-        # 1. Reciter Selection (Native Right-to-Left typing and Autocomplete)
+        # 1. Reciter Selection 
         layout.addWidget(QLabel("ابحث واختر القارئ:"))
         
         self.reciter_combo = QComboBox()
         self.reciter_combo.setEditable(True)
         self.reciter_combo.addItems(self.reciters_list)
-        self.reciter_combo.setCurrentIndex(-1) # Start empty
+        self.reciter_combo.setCurrentIndex(-1) 
         
-        # Add Search/Autocomplete functionality
         reciter_completer = QCompleter(self.reciters_list)
         reciter_completer.setCaseSensitivity(Qt.CaseSensitivity.CaseInsensitive)
         reciter_completer.setFilterMode(Qt.MatchFlag.MatchContains)
@@ -426,10 +429,46 @@ class QuranDownloaderApp(QWidget):
         # 5. Download Button
         self.btn_download = QPushButton("بدء التحميل بضغطة واحدة")
         self.btn_download.setMinimumHeight(40)
+        self.btn_download.setStyleSheet("font-weight: bold;")
         self.btn_download.clicked.connect(self.start_download)
         layout.addWidget(self.btn_download)
 
+        # --- 6. Footer (Credentials & Feedback) ---
+        footer_layout = QHBoxLayout()
+        
+        self.btn_about = QPushButton("عن التطبيق")
+        self.btn_about.clicked.connect(self.show_about)
+        
+        self.btn_report = QPushButton("الإبلاغ عن مشكلة")
+        self.btn_report.clicked.connect(self.open_feedback)
+        
+        footer_layout.addWidget(self.btn_about)
+        footer_layout.addWidget(self.btn_report)
+        
+        layout.addLayout(footer_layout)
+
         self.setLayout(layout)
+
+    def show_about(self):
+        """Displays a dialog with the developer credentials"""
+        about_text = (
+            "تحميل القرآن الكريم بضغطة واحدة\n\n"
+            "تطبيق صُمم لتسهيل تحميل سور القرآن الكريم بصوت القراء المفضلين.\n\n"
+            "المطور: [ضع اسمك هنا]\n"
+            "الإصدار: 1.0.0"
+        )
+        QMessageBox.about(self, "عن التطبيق", about_text)
+
+    def open_feedback(self):
+        """Opens the GitHub Issues page or default email client"""
+        # Option A: Open GitHub Issues (Recommended)
+        # Change YOUR_GITHUB_USERNAME and YOUR_REPOSITORY to your actual GitHub info
+        url = QUrl("https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY/issues")
+        
+        # Option B: Open default email client (Remove the # below and comment out Option A if you prefer this)
+        # url = QUrl("mailto:your_email@example.com?subject=Report Bug: Quran Downloader")
+        
+        QDesktopServices.openUrl(url)
 
     def toggle_surah_select(self):
         is_single = self.radio_single.isChecked()
@@ -469,7 +508,6 @@ class QuranDownloaderApp(QWidget):
             downloads_path=self.downloads_path
         )
         
-        # Connect signals
         self.worker.progress_updated.connect(self.update_ui_progress)
         self.worker.max_progress_set.connect(self.progress.setMaximum)
         self.worker.finished.connect(self.download_finished)
@@ -488,13 +526,8 @@ class QuranDownloaderApp(QWidget):
 
 
 if __name__ == "__main__":
-    # Initialize the PyQt Application
     app = QApplication(sys.argv)
-    
-    # Enforce Right-to-Left layout globally for the entire app!
     app.setLayoutDirection(Qt.LayoutDirection.RightToLeft)
-    
-    # Apply a cleaner, more modern native style
     app.setStyle("Fusion") 
     
     window = QuranDownloaderApp()
