@@ -4,7 +4,7 @@ A simple, elegant desktop application built with **PyQt6** that lets you downloa
 
 The interface is fully in **Arabic** and laid out **right-to-left (RTL)** for a natural, native experience.
 
-![App Screenshot](screenshot.png)
+![App Screenshot](Screenshot.png)
 
 ---
 
