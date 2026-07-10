@@ -1,8 +1,8 @@
 # 📖 Quran Downloader GUI
 
-A simple, elegant desktop application built with **PyQt6** that lets you download high-quality Quran recitations (MP3) from your favorite reciters — with a single click.
+ 📖 About
+Quran Downloader GUI is a lightweight desktop app that makes it effortless to build a personal, offline Quran audio library. Pick a reciter from a searchable list of 241 Qaris, choose to download the full Mushaf (all 114 Surahs) or just a single Surah, and let the app handle the rest — fetching high-quality MP3s in the background, tracking progress in real time, and saving everything neatly organized by reciter name. No setup, no command line — just a native Arabic, right-to-left interface built with PyQt6.
 
-The interface is fully in **Arabic** and laid out **right-to-left (RTL)** for a natural, native experience.
 
 ![App Screenshot](Screenshot.png)
 
