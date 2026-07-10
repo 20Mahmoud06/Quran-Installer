@@ -49,7 +49,7 @@ Downloaded files are saved to:
 
 No installation or setup needed — this is a **standalone executable**.
 
-1. Download the latest `.exe` from the [Releases](../../releases) section.
+1. Download the latest `.exe`  or `app image` the from the [Releases](../../releases) section.
 2. Double-click to run it. That's it.
 
 ---
