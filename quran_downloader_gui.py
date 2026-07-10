@@ -6,7 +6,7 @@ from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QComboBox, QRadioButton, QProgressBar, QPushButton, 
                              QMessageBox, QHBoxLayout, QCompleter)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QUrl
-from PyQt6.QtGui import QDesktopServices
+from PyQt6.QtGui import QDesktopServices, QIcon
 
 # The 114 Surahs of the Holy Quran
 SURAHS = [
@@ -230,6 +230,7 @@ class QuranDownloaderApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("تحميل القرآن الكريم بضغطة واحدة")
+        self.setWindowIcon(QIcon("logo.png"))  # Added App Logo here
         
         # Increased window height slightly to accommodate the new buttons
         self.setFixedSize(500, 480) 
@@ -325,7 +326,8 @@ class QuranDownloaderApp(QWidget):
         about_text = (
             "تحميل القرآن الكريم بضغطة واحدة\n\n"
             "تطبيق صُمم لتسهيل تحميل سور القرآن الكريم بصوت القراء المفضلين.\n\n"
-            "المطور: MOZA-18\n"
+            "المطور: Moaz Waleed\n"  # Updated Name
+            "للتواصل: moazw9969@gmail.com\n"  # Added Email
             "الإصدار: 1.0.0"
         )
         QMessageBox.about(self, "عن التطبيق", about_text)
