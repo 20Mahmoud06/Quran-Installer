@@ -25,7 +25,7 @@ jobs:
         pip install requests PyQt6 pyinstaller
         
     - name: Build Executable with PyInstaller
-      run: pyinstaller --onefile --windowed quran_downloader_gui.py
+      run: pyinstaller --onefile --windowed --add-data "surah.json;." --add-data "clean_root_reciters.json;." --add-data "logo.png;." --icon="logo.png" quran_downloader_gui.py
       
     - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4

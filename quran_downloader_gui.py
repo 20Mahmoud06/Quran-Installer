@@ -9,6 +9,15 @@ from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QUrl, QStringListModel
 from PyQt6.QtGui import QDesktopServices, QIcon
 
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+    return os.path.join(base_path, relative_path)
+
 def load_json_file(filename, default_data):
     """Helper function to load a JSON file safely."""
     if os.path.exists(filename):
@@ -22,8 +31,8 @@ def load_json_file(filename, default_data):
         print(f"Warning: {filename} not found in the directory.")
         return default_data
 
-SURAHS = load_json_file('surah.json', [])
-RECITERS = load_json_file('clean_root_reciters.json', {})
+SURAHS = load_json_file(get_resource_path('surah.json'), [])
+RECITERS = load_json_file(get_resource_path('clean_root_reciters.json'), {})
 
 
 def normalize_arabic_text(text):
@@ -169,7 +178,7 @@ class QuranDownloaderApp(QWidget):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("تحميل القرآن الكريم بضغطة واحدة")
-        self.setWindowIcon(QIcon("logo.png")) 
+        self.setWindowIcon(QIcon(get_resource_path("logo.png"))) 
         self.setFixedSize(500, 520) 
         self.downloads_path = os.path.join(os.path.expanduser("~"), "Downloads", "Quran_Downloads")
         
