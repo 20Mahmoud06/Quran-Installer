@@ -12,10 +12,9 @@ The project includes two applications:
 
 Whether you're using your computer or your phone, Quran Downloader makes collecting and organizing Quran recitations simple, fast, and reliable.
 
-<p align="center">
-  <img src="Screenshot.png" width="47%" />
-  <img src="mobile/assets/images/Quran%20Downloader%20banner.png" width="47%" />
-</p>
+| Desktop Application | Mobile Application |
+|:-------------------:|:------------------:|
+| <img src="desktop/Screenshot.png" width="100%"> | <img src="mobile/assets/images/Quran%20Downloader%20banner.png" width="100%"> |
 
 ---
 
@@ -123,6 +122,10 @@ Main components include:
 - **`DownloadWorker`** — Background `QThread` responsible for downloading files without freezing the UI.
 - **`RECITERS`** — Database containing **241 Quran reciters** and their audio sources.
 - **`SURAHS`** — Complete list of all 114 Surahs used throughout the application.
+
+For more details about the Desktop application, see:
+
+➡️ **[`desktop/README.md`](desktop/README.md)**
 
 ### 📱 Mobile Application
 
