@@ -124,7 +124,7 @@ Main components include:
 
 For more details about the Desktop application, see:
 
-➡️ **[`desktop/README.md`](desktop/README.md)**
+- 🖥️ [Desktop README](desktop/README.md)
 
 ### 📱 Mobile Application
 
@@ -139,7 +139,7 @@ Key folders include:
 
 For more details about the Flutter application, see:
 
-➡️ **[`mobile/README.md`](mobile/README.md)**
+- 📱 [Mobile README](mobile/README.md)
 ---
 
 ## ⚠️ Notes
