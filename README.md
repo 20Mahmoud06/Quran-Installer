@@ -90,7 +90,6 @@ No installation or setup required.
 
 ## 📁 Project Structure
 
-```text
 Quran-Installer/
 │
 ├── desktop/
