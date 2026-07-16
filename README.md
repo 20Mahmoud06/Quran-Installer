@@ -1,85 +1,170 @@
-# 📖 Quran Downloader GUI
+# 📖 Quran Downloader
 
- 📖 About
-Quran Downloader GUI is a lightweight desktop app that makes it effortless to build a personal, offline Quran audio library. Pick a reciter from a searchable list of 241 Qaris, choose to download the full Mushaf (all 114 Surahs) or just a single Surah, and let the app handle the rest — fetching high-quality MP3s in the background, tracking progress in real time, and saving everything neatly organized by reciter name. No setup, no command line — just a native Arabic, right-to-left interface built with PyQt6.
+## 📖 About
 
+Quran Downloader is an open-source project that helps you build your own offline Quran audio library with ease.
 
-![App Screenshot](Screenshot.png)
+The project includes two applications:
+
+- 🖥️ **Desktop App (PyQt6)** — A lightweight native application for Windows and Linux that lets you download complete Mushafs or individual Surahs from over **241 reciters**, with real-time progress tracking and organized downloads.
+
+- 📱 **Mobile App (Flutter)** — A modern Android application offering the same downloading experience with a beautiful Material 3 interface, background downloads, download management, and an optimized mobile user experience.
+
+Whether you're using your computer or your phone, Quran Downloader makes collecting and organizing Quran recitations simple, fast, and reliable.
+
+<p align="center">
+  <img src="Screenshot.png" width="47%" />
+  <img src="mobile/assets/images/Quran%20Downloader%20banner.png" width="47%" />
+</p>
 
 ---
 
-## ✨ Features / Benefits
+## ✨ Features
 
-- 🎙️ **241 Reciters (Qaris) built in** — one of the largest built-in reciter libraries around, covering globally famous names (Al-Afasy, Al-Husary, Al-Minshawi, and more) as well as many lesser-known but beloved reciters, each linked to a reliable streaming source.
-- 🔍 **Searchable dropdowns** — both the reciter and Surah selectors support live autocomplete/filtering, so you can just start typing to find what you need instead of scrolling through long lists.
-- 📚 **Full Mushaf download** — download all 114 Surahs from a chosen reciter in one click.
-- 🎯 **Single Surah download** — or just grab one specific Surah if that's all you need.
-- 📊 **Real-time progress tracking** — a progress bar plus live status text shows:
-  - Current Surah being downloaded (e.g. `3/114`)
-  - Percentage complete
-  - Estimated time remaining (ETA)
-- ⚡ **Non-blocking UI** — downloads run on a background thread (`QThread`), so the app never freezes while files are being fetched.
-- 🔁 **Smart skip / resume-friendly** — if a file has already been downloaded (checked by filename), the app automatically skips it instead of re-downloading, so you can safely stop and restart a full-Mushaf download at any time.
-- 🗂️ **Organized, human-readable file names** — files are saved as `NNN - SurahName.mp3` inside a folder named after the reciter, so your library stays clean and easy to browse.
-- 🛡️ **Error resilience** — if a single Surah fails to download (e.g. network hiccup), the app logs the error and continues with the rest of the queue instead of crashing.
-- 🎨 **Clean, modern look** — uses Qt's "Fusion" style for a consistent, native-feeling UI.
-- 🖥️ **Standalone executable** — no Python, no dependencies, no setup. Just download and run.
+### 🖥️ Desktop Application (PyQt6)
+
+- 🎙️ **241 Built-in Reciters (Qaris)** — Includes one of the largest built-in reciter libraries, featuring globally recognized Qaris as well as many lesser-known reciters.
+- 🔍 **Smart Search** — Instantly search reciters and Surahs with live autocomplete.
+- 📚 **Download the Entire Mushaf** — Download all 114 Surahs with a single click.
+- 🎯 **Single Surah Download** — Download only the Surah you need.
+- 📊 **Real-Time Progress Tracking** — Live progress bar, current Surah, percentage, and estimated time remaining (ETA).
+- ⚡ **Responsive UI** — Downloads run in the background using `QThread`, keeping the interface smooth.
+- 🔁 **Resume-Friendly Downloads** — Existing files are automatically skipped.
+- 🗂️ **Organized File Structure** — Files are saved as `NNN - SurahName.mp3` inside folders named after each reciter.
+- 🛡️ **Error Resilience** — Failed downloads are logged while the remaining queue continues normally.
+- 🖥️ **Standalone Executable** — No Python installation or additional setup required.
+
+### 📱 Mobile Application (Flutter)
+
+- 📱 **Modern Material 3 Interface** — Clean, responsive, and optimized for Android devices.
+- 🎙️ **Browse Hundreds of Reciters** — Quickly find your favorite reciter.
+- 📚 **Download Full Mushaf** — Download all Surahs with one tap.
+- 🎯 **Single Surah Download** — Download individual Surahs whenever needed.
+- 📊 **Background Downloads** — Continue downloading even while using other apps.
+- 📂 **Download Manager** — Track download progress, status, and completed files.
+- 🔍 **Fast Search** — Instantly search both reciters and Surahs.
+- 📁 **Organized Storage** — Audio files are neatly grouped by reciter.
+- 🎨 **Beautiful Flutter UI** — Built with Material 3 for a smooth user experience.
+- ⚡ **Optimized Performance** — Lightweight architecture with responsive interactions.
 
 ---
 
 ## 🖼️ How It Works
 
-1. **Search and select a reciter** from the dropdown (autocomplete included).
-2. **Choose a download mode:**
-   - "Download the entire Mushaf" (all 114 Surahs), or
-   - "Download a specific Surah only"
-3. If downloading a single Surah, **search and select** it from the Surah list.
-4. Click **"Start One-Click Download"**.
-5. Watch the **progress bar and status label** update live as files download.
-6. Once finished, you'll get a confirmation popup with the exact folder path where your files were saved.
+### 🖥️ Desktop Application
 
-Downloaded files are saved to:
-```
+1. Search and select a **reciter** from the searchable dropdown.
+2. Choose a download mode:
+   - 📚 Download the entire Mushaf (114 Surahs), or
+   - 🎯 Download a specific Surah.
+3. If downloading a single Surah, select it from the searchable Surah list.
+4. Click **Start One-Click Download**.
+5. Monitor the live progress bar, download status, and ETA.
+6. Once completed, the downloaded files are automatically organized inside your Downloads folder.
+
+Downloaded files are stored in:
+
+```text
 ~/Downloads/Quran_Downloads/<Reciter_Name>/
-```
 
 ---
 
 ## 🚀 Usage
 
-No installation or setup needed — this is a **standalone executable**.
+### 🖥️ Desktop Application
 
-1. Download the latest `.exe`  or `app image` the from the [Releases](../../releases) section.
-2. Double-click to run it. That's it.
+No installation or setup required.
+
+1. Download the latest **Windows (.exe)** or **Linux (AppImage)** release from the [Releases](../../releases) page.
+2. Double-click the executable (or launch the AppImage on Linux).
+3. Select a reciter, choose your download mode, and start downloading.
+
+### 📱 Mobile Application
+
+1. Download the latest **Android APK** from the [Releases](../../releases) page.
+2. Install the APK on your Android device.
+3. Launch the app.
+4. Browse or search for a reciter.
+5. Download the entire Mushaf or a single Surah with one tap.
 
 ---
 
 ## 📁 Project Structure
 
-```
-quran_downloader_gui.exe   # Standalone app — download & run
-quran_downloader_gui.py    # Source code (Python + PyQt6), for reference/building from source
+```text
+Quran-Installer/
+│
+├── desktop/
+│   ├── quran_downloader_gui.py      # Desktop application source (PyQt6)
+│   ├── clean_root_reciters.json     # Reciters database
+│   ├── surah.json                   # Surah metadata
+│   ├── Screenshot.png               # Desktop preview
+│   └── ...
+│
+├── mobile/
+│   ├── lib/                         # Flutter application source
+│   ├── assets/                      # Images, icons and resources
+│   ├── android/                     # Android platform files
+│   ├── ios/                         # iOS platform files
+│   ├── pubspec.yaml                 # Flutter dependencies
+│   └── README.md                    # Mobile documentation
+│
+├── README.md                        # Main repository documentation
+└── LICENSE
 ```
 
-The source is fully self-contained in a single file:
-- `SURAHS` — list of all 114 Surah names in Arabic.
-- `RECITERS` — dictionary mapping reciter names to their audio server base URLs.
-- `DownloadWorker` — background `QThread` responsible for downloading files without freezing the UI.
-- `QuranDownloaderApp` — the main PyQt6 window and UI logic.
+### 🖥️ Desktop Application
 
+The desktop application is built with **Python + PyQt6** and keeps the implementation simple and lightweight.
+
+Main components include:
+
+- **`quran_downloader_gui.py`** — Main application window and download logic.
+- **`DownloadWorker`** — Background `QThread` responsible for downloading files without freezing the UI.
+- **`RECITERS`** — Database containing **241 Quran reciters** and their audio sources.
+- **`SURAHS`** — Complete list of all 114 Surahs used throughout the application.
+
+### 📱 Mobile Application
+
+The mobile application is built with **Flutter** using a scalable architecture.
+
+Key folders include:
+
+- **`lib/`** — Application source code.
+- **`assets/`** — Images, icons, fonts and other resources.
+- **`android/` & `ios/`** — Platform-specific configurations.
+- **`pubspec.yaml`** — Flutter packages and project configuration.
+
+For more details about the Flutter application, see:
+
+➡️ **[`mobile/README.md`](mobile/README.md)**
 ---
 
 ## ⚠️ Notes
 
-- No Python or dependencies required — just run the `.exe`.
-- An internet connection is required to download recitations.
-- Audio files are streamed from third-party public Quran audio servers; availability depends on those servers being online.
-- This tool is intended for personal, offline listening convenience.
+- 📡 An internet connection is required to download Quran recitations.
+- 🎧 Audio files are fetched from publicly available Quran audio servers, so availability depends on those services.
+- 📂 Downloaded recitations are organized automatically by reciter name.
+- 🖥️ The Desktop application is distributed as a standalone executable and does not require Python or additional dependencies.
+- 📱 The Mobile application requires Flutter only if you intend to build or modify the source code.
+- 🤲 This project is completely free and open source, created to make downloading Quran recitations simple and accessible for everyone.
 
 ---
 
 ## 🤝 Contributing
 
-Contributions, bug reports, and feature requests are welcome! Feel free to open an issue or submit a pull request.
+Contributions are always welcome!
+
+Whether you'd like to:
+
+- 🐛 Report a bug
+- 💡 Suggest a new feature
+- 🚀 Improve performance
+- 🎨 Enhance the UI/UX
+- 📖 Improve the documentation
+
+Feel free to open an **Issue** or submit a **Pull Request**.
+
+Every contribution helps make Quran Downloader better for everyone. ❤️
 
 
