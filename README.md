@@ -14,7 +14,7 @@ Whether you're using your computer or your phone, Quran Downloader makes collect
 
 | Desktop Application | Mobile Application |
 |:-------------------:|:------------------:|
-| <img src="desktop/Screenshot.png" width="100%"> | <img src="mobile/assets/images/Quran%20Downloader%20banner.png" width="100%"> |
+| <img src="desktop/" width="100%"> | <img src="mobile/assets/images/Quran%20Downloader%20banner.png" width="100%"> |
 
 ---
 
