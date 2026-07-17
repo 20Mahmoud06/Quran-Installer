@@ -21,14 +21,14 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        # Added pillow so PyInstaller can auto-convert the png to ico for Windows
         pip install requests PyQt6 pyinstaller pillow
         
     - name: Build Executable with PyInstaller
+      working-directory: ./desktop
       run: pyinstaller --onefile --windowed --add-data "surah.json;." --add-data "clean_root_reciters.json;." --add-data "logo.png;." --icon="logo.png" quran_downloader_gui.py
       
     - name: Upload EXE Artifact
       uses: actions/upload-artifact@v4
       with:
         name: Quran-Downloader-Windows-EXE
-        path: dist/*.exe
+        path: desktop/dist/*.exe
