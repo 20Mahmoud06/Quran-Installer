@@ -7,19 +7,16 @@ from PyQt6.QtWidgets import (QApplication, QWidget, QVBoxLayout, QLabel,
                              QComboBox, QRadioButton, QProgressBar, QPushButton, 
                              QMessageBox, QHBoxLayout, QCompleter, QFileDialog)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QUrl, QStringListModel
-from PyQt6.QtGui import QDesktopServices, QIcon
+from PyQt6.QtGui import QDesktopServices, QIcon, QFontDatabase, QFont
 
 def get_resource_path(relative_path):
-    """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
-        # PyInstaller creates a temp folder and stores path in _MEIPASS
         base_path = sys._MEIPASS
     except Exception:
         base_path = os.path.abspath(".")
     return os.path.join(base_path, relative_path)
 
 def load_json_file(filename, default_data):
-    """Helper function to load a JSON file safely."""
     if os.path.exists(filename):
         try:
             with open(filename, 'r', encoding='utf-8') as file:
@@ -34,20 +31,51 @@ def load_json_file(filename, default_data):
 SURAHS = load_json_file(get_resource_path('surah.json'), [])
 RECITERS = load_json_file(get_resource_path('clean_root_reciters.json'), {})
 
-
 def normalize_arabic_text(text):
-    """دالة مساعدة لتوحيد النصوص العربية وحذف المسافات"""
     if not text:
         return ""
-    # إزالة المسافات والشرطات لسهولة المطابقة (ابوبكر == أبو بكر)
     text = text.replace(" ", "").replace("-", "").replace("_", "")
-    # توحيد الألف
     text = text.replace("أ", "ا").replace("إ", "ا").replace("آ", "ا")
-    # توحيد التاء المربوطة والهاء
     text = text.replace("ة", "ه")
-    # توحيد الياء والألف المقصورة
     text = text.replace("ى", "ي")
     return text.lower()
+
+
+class UpdateCheckerThread(QThread):
+    update_available = pyqtSignal(str, str)
+
+    def __init__(self, current_version):
+        super().__init__()
+        self.current_version = current_version
+
+    def run(self):
+        try:
+            url = "https://api.github.com/repos/MOZA-18/Quran-Installer/releases/latest"
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                data = response.json()
+                latest_version = data.get("name", "").strip("v")
+                if not latest_version:
+                    latest_version = data.get("tag_name", "").strip("v")
+                release_url = data.get("html_url", "")
+                
+                if self.is_newer_version(self.current_version, latest_version):
+                    self.update_available.emit(latest_version, release_url)
+        except Exception:
+            pass
+
+    def is_newer_version(self, current, latest):
+        try:
+            curr_parts = [int(x) for x in current.split('.')]
+            lat_parts = [int(x) for x in latest.split('.')]
+            for c, l in zip(curr_parts, lat_parts):
+                if l > c:
+                    return True
+                elif l < c:
+                    return False
+            return len(lat_parts) > len(curr_parts)
+        except ValueError:
+            return False
 
 
 class DownloadWorker(QThread):
@@ -177,34 +205,110 @@ class DownloadWorker(QThread):
 class QuranDownloaderApp(QWidget):
     def __init__(self):
         super().__init__()
+        self.current_version = "1.2.1"
         self.setWindowTitle("تحميل القرآن الكريم بضغطة واحدة")
         self.setWindowIcon(QIcon(get_resource_path("logo.png"))) 
-        self.setFixedSize(500, 520) 
+        
+        self.setMinimumSize(500, 550) 
+        self.resize(600, 650)
+        
         self.downloads_path = os.path.join(os.path.expanduser("~"), "Downloads", "Quran_Downloads")
         
         self.reciters_list = list(RECITERS.keys())
         self.surahs_list = [f"{i+1} - سورة {name}" for i, name in enumerate(SURAHS)]
 
+        self.apply_design_system()
         self.init_ui()
+        self.check_for_updates()
+
+    def apply_design_system(self):
+        qss = """
+        QWidget {
+            background-color: #fbf9f8;
+            color: #4A4A4A;
+            font-family: 'IBM Plex Sans Arabic', sans-serif;
+            font-size: 16px;
+        }
+        QLabel {
+            color: #1b1c1c;
+            font-weight: 500;
+        }
+        QPushButton {
+            background-color: #0F6E56;
+            color: #ffffff;
+            border-radius: 12px;
+            padding: 10px;
+            font-weight: bold;
+            border: none;
+        }
+        QPushButton:hover {
+            background-color: #086b53;
+        }
+        QPushButton:pressed {
+            background-color: #005440;
+        }
+        QPushButton:disabled {
+            background-color: #e4e2de;
+            color: #c8c6c3;
+        }
+        QComboBox {
+            background-color: #ffffff;
+            border: 1px solid #bec9c3;
+            border-radius: 8px;
+            padding: 8px;
+            color: #1b1c1c;
+        }
+        QComboBox:focus {
+            border: 1px solid #0F6E56;
+            background-color: #fbf9f8;
+        }
+        QComboBox::drop-down {
+            border: none;
+            width: 30px;
+        }
+        QProgressBar {
+            border: none;
+            background-color: #efeded;
+            border-radius: 8px;
+            text-align: center;
+            color: #1b1c1c;
+            font-weight: bold;
+            min-height: 24px;
+        }
+        QProgressBar::chunk {
+            background-color: #BA7517;
+            border-radius: 8px;
+        }
+        QRadioButton {
+            color: #1b1c1c;
+            spacing: 10px;
+        }
+        QRadioButton::indicator {
+            width: 18px;
+            height: 18px;
+            border-radius: 9px;
+            border: 2px solid #bec9c3;
+            background-color: #ffffff;
+        }
+        QRadioButton::indicator:checked {
+            background-color: #0F6E56;
+            border: 2px solid #0F6E56;
+        }
+        """
+        self.setStyleSheet(qss)
 
     def setup_arabic_search(self, combo_box, items_list):
-        """إعداد بحث ذكي يدعم اللغة العربية مع ترتيب دقيق وموثوق للنتائج"""
-        
-        # 1. الموديل الأساسي للـ ComboBox (ليحتفظ بكل البيانات عند الضغط على السهم)
         combo_model = QStringListModel(items_list)
         combo_box.setModel(combo_model)
         
-        # 2. موديل منفصل خاص بقائمة الإكمال (Completer) نتحكم فيه ديناميكياً
         completer_model = QStringListModel(items_list)
         completer = QCompleter(completer_model, combo_box)
         
-        # إجبار الـ Completer على عرض الموديل كما هو بدون فلترة أو ترتيب داخلي
         completer.setCompletionMode(QCompleter.CompletionMode.UnfilteredPopupCompletion)
         completer.setModelSorting(QCompleter.ModelSorting.UnsortedModel)
         
         combo_box.setCompleter(completer)
         
-        # دالة يتم استدعاؤها مع كل حرف يكتبه المستخدم
         def on_text_edited(text):
             norm_text = normalize_arabic_text(text)
             
@@ -215,7 +319,6 @@ class QuranDownloaderApp(QWidget):
             starts_with = []
             contains = []
             
-            # الفرز اليدوي الدقيق
             for item in items_list:
                 norm_item = normalize_arabic_text(item)
                 if norm_item.startswith(norm_text):
@@ -223,16 +326,14 @@ class QuranDownloaderApp(QWidget):
                 elif norm_text in norm_item:
                     contains.append(item)
                     
-            # الدمج: ما يبدأ بالكلمة يوضع أولاً، يليه ما يحتوي على الكلمة
             completer_model.setStringList(starts_with + contains)
             
-        # ربط حدث الكتابة بالدالة الخاصة بنا
         combo_box.lineEdit().textEdited.connect(on_text_edited)
 
     def init_ui(self):
         layout = QVBoxLayout()
-        layout.setSpacing(15)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(16)
+        layout.setContentsMargins(24, 24, 24, 24)
 
         layout.addWidget(QLabel("ابحث واختر القارئ:"))
         
@@ -240,6 +341,7 @@ class QuranDownloaderApp(QWidget):
         self.reciter_combo.setEditable(True)
         self.setup_arabic_search(self.reciter_combo, self.reciters_list)
         self.reciter_combo.setCurrentIndex(-1) 
+        self.reciter_combo.setMinimumHeight(40)
         layout.addWidget(self.reciter_combo)
 
         layout.addWidget(QLabel("خيارات التحميل:"))
@@ -261,10 +363,11 @@ class QuranDownloaderApp(QWidget):
         self.surah_combo.setEnabled(False)
         self.setup_arabic_search(self.surah_combo, self.surahs_list)
         self.surah_combo.setCurrentIndex(-1)
+        self.surah_combo.setMinimumHeight(40)
         layout.addWidget(self.surah_combo)
 
         self.status_label = QLabel("جاهز للبدء")
-        self.status_label.setStyleSheet("color: gray;")
+        self.status_label.setStyleSheet("color: #6f7a74;")
         layout.addWidget(self.status_label)
         
         self.progress = QProgressBar()
@@ -272,26 +375,26 @@ class QuranDownloaderApp(QWidget):
         layout.addWidget(self.progress)
 
         controls_layout = QHBoxLayout()
+        controls_layout.setSpacing(16)
         
         self.btn_download = QPushButton("بدء التحميل")
-        self.btn_download.setMinimumHeight(40)
-        self.btn_download.setStyleSheet("font-weight: bold;")
+        self.btn_download.setMinimumHeight(45)
         self.btn_download.clicked.connect(self.start_download)
         
         self.btn_pause = QPushButton("إيقاف مؤقت")
-        self.btn_pause.setMinimumHeight(40)
+        self.btn_pause.setMinimumHeight(45)
         self.btn_pause.setEnabled(False)
         self.btn_pause.clicked.connect(self.toggle_pause)
 
         self.btn_cancel = QPushButton("إلغاء")
-        self.btn_cancel.setMinimumHeight(40)
+        self.btn_cancel.setMinimumHeight(45)
         self.btn_cancel.setEnabled(False)
         self.btn_cancel.clicked.connect(self.cancel_download)
 
         if not RECITERS:
             self.btn_download.setEnabled(False)
             self.status_label.setText("خطأ: لم يتم العثور على ملف clean_root_reciters.json")
-            self.status_label.setStyleSheet("color: red;")
+            self.status_label.setStyleSheet("color: #ba1a1a;")
             
         controls_layout.addWidget(self.btn_download)
         controls_layout.addWidget(self.btn_pause)
@@ -301,8 +404,11 @@ class QuranDownloaderApp(QWidget):
 
         footer_layout = QHBoxLayout()
         self.btn_about = QPushButton("عن التطبيق")
+        self.btn_about.setStyleSheet("background-color: transparent; color: #0F6E56; border: 1px solid #0F6E56;")
         self.btn_about.clicked.connect(self.show_about)
+        
         self.btn_report = QPushButton("الإبلاغ عن مشكلة")
+        self.btn_report.setStyleSheet("background-color: transparent; color: #0F6E56; border: 1px solid #0F6E56;")
         self.btn_report.clicked.connect(self.open_feedback)
         
         footer_layout.addWidget(self.btn_about)
@@ -311,13 +417,28 @@ class QuranDownloaderApp(QWidget):
 
         self.setLayout(layout)
 
+    def check_for_updates(self):
+        self.update_thread = UpdateCheckerThread(self.current_version)
+        self.update_thread.update_available.connect(self.prompt_update)
+        self.update_thread.start()
+
+    def prompt_update(self, latest_version, release_url):
+        reply = QMessageBox.question(
+            self,
+            "تحديث متاح",
+            f"يتوفر إصدار جديد من التطبيق ({latest_version}).\nهل تريد تحديث التطبيق الآن؟",
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+        )
+        if reply == QMessageBox.StandardButton.Yes:
+            QDesktopServices.openUrl(QUrl(release_url))
+
     def show_about(self):
         about_text = (
             "تحميل القرآن الكريم بضغطة واحدة\n\n"
             "تطبيق صُمم لتسهيل تحميل سور القرآن الكريم بصوت القراء المفضلين.\n"
             "المطور: Moaz Waleed\n" 
             "للتواصل: moazw9969@gmail.com\n" 
-            "الإصدار: 1.2.1"
+            f"الإصدار: {self.current_version}"
         )
         QMessageBox.about(self, "عن التطبيق", about_text)
 
